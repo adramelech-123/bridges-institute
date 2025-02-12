@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
+import rateLimit from 'express-rate-limit'
 
 dotenv.config();
 
@@ -13,6 +14,17 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
+// Rate limiter: Allows max 3 requests per 5 minutes per IP
+const emailLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000, // 5 minutes
+    max: 3, // Max 3 requests per windowMs
+    message: {
+        success: false,
+        message: "Too many requests! Please wait a few minutes before trying again."
+    },
+    headers: true
+});
+
 // Nodemailer Transport
 const transporter = nodemailer.createTransport({
     service: 'gmail', // Use your email provider
@@ -22,8 +34,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// API Route for sending email
-app.post('/send-email', async (req, res) => {
+// API Route for sending email with rate Limiter
+app.post('/send-email',emailLimiter, async (req, res) => {
     const { fullName, phone, email, selectedCourses } = req.body;
     const submissionTime = new Date().toLocaleString(); // Capture the submission time
 
