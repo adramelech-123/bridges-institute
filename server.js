@@ -34,6 +34,10 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+app.get('/', (req, res) => {
+    res.send('Server is running. Welcome to Bridges Institute API!');
+});
+
 // API Route for sending email with rate Limiter
 app.post('/send-email',emailLimiter, async (req, res) => {
     const { fullName, phone, email, selectedCourses } = req.body;
