@@ -35,7 +35,7 @@ const Modal = ({isOpen, setIsOpen, formData, setFormData}: ModalProps) => {
       e.preventDefault();
   
       try {
-          const response = await fetch('https://bridges-institute.netlify.app/send-email', {
+          const response = await fetch('https://bridges-institute.onrender.com/send-email', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(formData),
